@@ -1,0 +1,7 @@
+name: MinecraftCommerce-MySQL
+description: MySQL gateway type for MinecraftCommerce
+author: Tim van Dijkhuizen
+version: "1.0.0"
+api-version: 1.13
+main: nl.timvandijkhuizen.commerce.mysql.CommerceMySQL
+depend: [SpigotUtils, MinecraftCommerce]
