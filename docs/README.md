@@ -1,6 +1,13 @@
 # MinecraftCommerce-MySQL
 This storage type allows you to store your MinecraftCommerce data in a MySQL database.
 
+### Requirements
+* [MinecraftCommerce requirements](https://github.com/TimvanDijkhuizen/MinecraftCommerce#requirements)
+* A MySQL database
+
+### Installation
+[MinecraftCommerce installation guide](https://github.com/TimvanDijkhuizen/MinecraftCommerce#installation)
+
 ### Configuration
 Options with a * are required.
 
