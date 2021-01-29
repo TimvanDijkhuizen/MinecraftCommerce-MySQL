@@ -595,7 +595,7 @@ public class StorageMysql implements StorageType {
         Connection connection = getConnection();
         String sql = "SELECT * FROM fields";
         PreparedStatement statement = connection.prepareStatement(sql);
-        FieldService fieldService = Commerce.getInstance().getService("fields");
+        FieldService fieldService = Commerce.getInstance().getService(FieldService.class);
 
         // Get result
         ResultSet result = statement.executeQuery();
@@ -705,7 +705,7 @@ public class StorageMysql implements StorageType {
         Connection connection = getConnection();
         String sql = "SELECT * FROM gateways";
         PreparedStatement statement = connection.prepareStatement(sql);
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+        GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
 
         // Get result
         ResultSet result = statement.executeQuery();
@@ -1232,7 +1232,7 @@ public class StorageMysql implements StorageType {
             long dateCreated = result.getLong(6);
 
             // Get Gateway
-            GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+            GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
             Integer gatewayId = DbHelper.getInteger(result, 7);
             String gatewayDisplayName = result.getString(8);
             String gatewayTypeHandle = result.getString(9);
@@ -1346,7 +1346,8 @@ public class StorageMysql implements StorageType {
         }
         
         // Get Gateway
-        GatewayService gatewayService = Commerce.getInstance().getService("gateways");
+        GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
+        
         Integer gatewayId = DbHelper.getInteger(result, 8);
         String gatewayDisplayName = result.getString(9);
         String gatewayTypeHandle = result.getString(10);
