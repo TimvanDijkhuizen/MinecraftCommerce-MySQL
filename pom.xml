@@ -60,12 +60,12 @@
 
         <repository>
             <id>spigot-utils</id>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/spigotutils</url>
+            <url>https://maven.pkg.github.com/timvandijkhuizen/spigot-utils</url>
         </repository>
 
         <repository>
             <id>minecraft-commerce</id>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/minecraftcommerce</url>
+            <url>https://maven.pkg.github.com/timvandijkhuizen/minecraft-commerce</url>
         </repository>
 	</repositories>
 
