@@ -9,7 +9,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/minecraft-commerce-mysql</url>
+            <url>https://maven.pkg.github.com/timvandijkhuizen/minecraftcommerce-mysql</url>
         </repository>
     </distributionManagement>
 
@@ -59,13 +59,8 @@
 		</repository>
 
         <repository>
-            <id>spigot-utils</id>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/spigot-utils</url>
-        </repository>
-
-        <repository>
-            <id>minecraft-commerce</id>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/minecraft-commerce</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/timvandijkhuizen/*</url>
         </repository>
 	</repositories>
 
@@ -80,7 +75,7 @@
 		<dependency>
 			<groupId>timvandijkhuizen</groupId>
 			<artifactId>spigot-utils</artifactId>
-			<version>1.2.0</version>
+			<version>1.2.2</version>
 			<scope>provided</scope>
 		</dependency>
 
