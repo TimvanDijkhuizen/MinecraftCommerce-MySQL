@@ -9,7 +9,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/timvandijkhuizen/minecraftcommerce-mysql</url>
+            <url>https://maven.pkg.github.com/timvandijkhuizen/minecraft-commerce-mysql</url>
         </repository>
     </distributionManagement>
 
