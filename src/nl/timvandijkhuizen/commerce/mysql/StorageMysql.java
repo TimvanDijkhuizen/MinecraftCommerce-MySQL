@@ -1210,7 +1210,7 @@ public class StorageMysql implements StorageType {
     @Override
     public Set<Transaction> getTransactionsByOrderId(int orderId) throws Throwable {
         Connection connection = getConnection();
-        String sql = "SELECT transactions.id, transactions.currency, transactions.reference, transactions.amount, transactions.meta, transactions.dateCreated, "
+        String sql = "SELECT transactions.id, transactions.orderId, transactions.currency, transactions.reference, transactions.amount, transactions.meta, transactions.dateCreated, "
             + "gateways.id, gateways.displayName, gateways.type, gateways.config "
             + "FROM transactions "
             + "LEFT JOIN gateways ON gateways.id = transactions.gatewayId "
@@ -1224,36 +1224,11 @@ public class StorageMysql implements StorageType {
         Set<Transaction> transactions = new LinkedHashSet<>();
 
         while (result.next()) {
-            int id = result.getInt(1);
-            StoreCurrency currency = DbHelper.parseCurrency(result.getString(2));
-            String reference = result.getString(3);
-            float amount = result.getFloat(4);
-            JsonObject meta = JsonHelper.fromJson(result.getString(5));
-            long dateCreated = result.getLong(6);
-
-            // Get Gateway
-            GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
-            Integer gatewayId = DbHelper.getInteger(result, 7);
-            String gatewayDisplayName = result.getString(8);
-            String gatewayTypeHandle = result.getString(9);
-            String gatewayJson = result.getString(10);
-            Gateway gateway = null;
-
-            if (gatewayId != null) {
-                GatewayType gatewayType = gatewayService.getTypeByHandle(gatewayTypeHandle);
-
-                if (gatewayType != null) {
-                    GatewayConfig gatewayConfig = DbHelper.parseGatewayConfig(gatewayJson, gatewayType);
-                    gateway = new Gateway(gatewayId, gatewayDisplayName, gatewayType, gatewayConfig);
-                }
-            }
+            Transaction transaction = parseTransaction(result);
             
-            if(currency == null) {
-                ConsoleHelper.printError("Failed to load transaction with id " + id + ", currency does not exist.");
-                continue;
+            if(transaction != null) {
+                transactions.add(transaction);
             }
-            
-            transactions.add(new Transaction(id, orderId, gateway, currency, reference, amount, meta, dateCreated));
         }
 
         // Cleanup
@@ -1262,6 +1237,34 @@ public class StorageMysql implements StorageType {
         connection.close();
 
         return transactions;
+    }
+    
+    @Override
+    public Transaction getTransactionByReference(String reference) throws Throwable {
+        Connection connection = getConnection();
+        String sql = "SELECT transactions.id, transactions.orderId, transactions.currency, transactions.reference, transactions.amount, transactions.meta, transactions.dateCreated, "
+            + "gateways.id, gateways.displayName, gateways.type, gateways.config "
+            + "FROM transactions "
+            + "LEFT JOIN gateways ON gateways.id = transactions.gatewayId "
+            + "WHERE reference=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, reference);
+
+        // Get result
+        ResultSet result = statement.executeQuery();
+        Transaction transaction = null;
+
+        if (result.next()) {
+            transaction = parseTransaction(result);
+        }
+
+        // Cleanup
+        result.close();
+        statement.close();
+        connection.close();
+
+        return transaction;
     }
     
     @Override
@@ -1371,6 +1374,40 @@ public class StorageMysql implements StorageType {
         Set<Transaction> transactions = getTransactionsByOrderId(id);
 
         return new Order(id, uniqueId, playerUniqueId, playerName, currency, lineItems, fields, gateway, completed, transactions);
+    }
+    
+    private Transaction parseTransaction(ResultSet result) throws Throwable {
+        int id = result.getInt(1);
+        int orderId = result.getInt(2);
+        StoreCurrency currency = DbHelper.parseCurrency(result.getString(3));
+        String reference = result.getString(4);
+        float amount = result.getFloat(5);
+        JsonObject meta = JsonHelper.fromJson(result.getString(6));
+        long dateCreated = result.getLong(7);
+
+        // Get Gateway
+        GatewayService gatewayService = Commerce.getInstance().getService(GatewayService.class);
+        Integer gatewayId = DbHelper.getInteger(result, 8);
+        String gatewayDisplayName = result.getString(9);
+        String gatewayTypeHandle = result.getString(10);
+        String gatewayJson = result.getString(11);
+        Gateway gateway = null;
+
+        if (gatewayId != null) {
+            GatewayType gatewayType = gatewayService.getTypeByHandle(gatewayTypeHandle);
+
+            if (gatewayType != null) {
+                GatewayConfig gatewayConfig = DbHelper.parseGatewayConfig(gatewayJson, gatewayType);
+                gateway = new Gateway(gatewayId, gatewayDisplayName, gatewayType, gatewayConfig);
+            }
+        }
+        
+        if(currency == null) {
+            ConsoleHelper.printError("Failed to load transaction with id " + id + ", currency does not exist.");
+            return null;
+        }
+        
+        return new Transaction(id, orderId, gateway, currency, reference, amount, meta, dateCreated);
     }
     
     /**
